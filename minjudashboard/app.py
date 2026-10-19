@@ -72,7 +72,7 @@ tab1, tab2, tab3 = st.tabs(["Challenge 1: Tips", "Challenge 2: Kaggle Dataset", 
 # =========================================================
 with tab1:
     st.header("💰 Tips Dashboard (Challenge 1)")
-    st.write("요구사항: Day 필터(사이드바), 메트릭(총합/평균 tip), time으로 색상 구분 산점도, 추가 차트 1개")
+    st.write("Requirements: Day filter (sidebar), metrics (total/mean tip), scatter plot colored by time, one extra chart")
 
     tips = load_tips_data()
 
@@ -133,7 +133,7 @@ with tab1:
 # =========================
 with tab2:
     st.header("📁 Challenge 2: Kaggle Dataset Dashboard")
-    st.write("고정 경로의 CSV(indexData.csv)를 불러와서 2+ 필터, 3+ 차트, 테이블을 구성합니다.")
+    st.write("Loads the CSV (indexData.csv) from a fixed path and builds 2+ filters, 3+ charts and a table.")
     st.divider()
 
     # 1) Load data (fixed path)
@@ -147,7 +147,7 @@ with tab2:
     try:
         df = load_index_data(DATA_PATH)
     except Exception as e:
-        st.error("데이터를 불러오지 못했습니다. 경로/파일명을 확인하세요.")
+        st.error("Could not load the data. Check the path and file name.")
         st.code(DATA_PATH)
         st.exception(e)
         st.stop()
@@ -156,7 +156,7 @@ with tab2:
     st.write(f"Shape: {df.shape}")
     st.dataframe(df.head(20), use_container_width=True)
 
-    # 2) Sidebar filters (항상 보이게)
+    # 2) Sidebar filters (always visible)
     st.sidebar.header("Filters (Challenge 2)")
 
     # (A) View options
@@ -180,9 +180,9 @@ with tab2:
             selected_year = st.sidebar.slider("Select Year", int(min(years)), int(max(years)), int(max(years)))
             filtered2 = filtered2[filtered2[date_col].dt.year == selected_year]
         else:
-            st.sidebar.caption("ℹ️ 날짜 컬럼은 찾았지만 연도 파싱이 안 됐어요.")
+            st.sidebar.caption("ℹ️ Found a date column but could not parse the year.")
     else:
-        st.sidebar.caption("ℹ️ date/time 컬럼을 못 찾아서 Year 필터는 비활성화됐어요.")
+        st.sidebar.caption("ℹ️ No date/time column found, so the Year filter is disabled.")
 
     # (C) Category filter (object columns)
     cat_cols = [c for c in df.columns if df[c].dtype == "object"]
@@ -190,14 +190,14 @@ with tab2:
 
     if category_col != "(none)":
         cats = sorted([x for x in filtered2[category_col].dropna().unique().tolist()])
-        # All 옵션 포함
+        # includes the All option
         cats_with_all = ["All"] + cats
         selected_cat = st.sidebar.selectbox("Category", cats_with_all, index=0)
 
         if selected_cat != "All":
             filtered2 = filtered2[filtered2[category_col] == selected_cat]
 
-        # 멀티선택(선택사항)
+        # multiselect (optional)
         enable_multi = st.sidebar.checkbox("Enable multi-select values", value=False)
         if enable_multi:
             selected_vals = st.sidebar.multiselect(
@@ -208,7 +208,7 @@ with tab2:
             if selected_vals:
                 filtered2 = filtered2[filtered2[category_col].isin(selected_vals)]
 
-    # (D) Numeric range filter (2+ filters requirement 충족 강화)
+    # (D) Numeric range filter (strengthens the 2+ filters requirement)
     num_cols = filtered2.select_dtypes(include="number").columns.tolist()
     num_col = st.sidebar.selectbox("Numeric column (range)", ["(none)"] + num_cols, index=0)
 
@@ -219,7 +219,7 @@ with tab2:
             r = st.sidebar.slider(f"{num_col} range", lo, hi, (lo, hi))
             filtered2 = filtered2[pd.to_numeric(filtered2[num_col], errors="coerce").between(r[0], r[1])]
         else:
-            st.sidebar.caption("ℹ️ 선택한 수치 컬럼에 유효한 값이 없어요.")
+            st.sidebar.caption("ℹ️ The selected numeric column has no valid values.")
 
     # (E) Outlier removal (optional polish)
     remove_outliers = st.sidebar.checkbox("Remove outliers (IQR)", value=False)
@@ -270,7 +270,7 @@ with tab2:
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
-            st.info("Scatter는 숫자 컬럼이 2개 이상 필요해요.")
+            st.info("A scatter plot needs at least 2 numeric columns.")
 
     # Chart 2: Histogram (needs 1 numeric column)
     with c2:
@@ -280,7 +280,7 @@ with tab2:
             fig = px.histogram(filtered2, x=hcol, nbins=30, title=f"Distribution of {hcol}")
             st.plotly_chart(fig, use_container_width=True)
         else:
-            st.info("Histogram은 숫자 컬럼이 1개 이상 필요해요.")
+            st.info("A histogram needs at least 1 numeric column.")
 
     # Chart 3: Line (if date exists) else Box/Bar fallback
     st.write("3) Line / Box / Bar (auto)")
@@ -301,7 +301,7 @@ with tab2:
         fig = px.bar(vc, x=category_col, y="count", title=f"Count by {category_col}")
         st.plotly_chart(fig, use_container_width=True)
     else:
-        st.info("date 또는 category 컬럼이 없어서 3번째 차트 자동 구성이 제한돼요.")
+        st.info("No date or category column, so the third chart cannot be built automatically.")
 
     # 5) Data table + download
     st.divider()
@@ -319,14 +319,14 @@ with tab2:
 # Challenge 3 (10 min): Polish & style notes
 # =========================================================
 with tab3:
-    st.header("✨ Polish & Style (Challenge 3 체크리스트)")
+    st.header("✨ Polish & Style (Challenge 3 checklist)")
     st.write(
-        "- ✅ `st.set_page_config(layout='wide')` : 맨 위에 적용됨\n"
-        "- ✅ `st.divider()` : 섹션 구분에 사용\n"
-        "- ✅ Tabs: Challenge별로 `st.tabs()` 사용\n"
-        "- ✅ Docstrings: `load_tips_data`, `load_csv`, `safe_numeric`, `pick_first_existing_column`에 포함\n\n"
-        "추가로 더 ‘대시보드답게’ 만들려면:\n"
-        "1) 사이드바를 챌린지별로 분리(현재는 Tips/Kaggle이 함께 있음)\n"
-        "2) 제목/설명 텍스트를 통일된 톤으로 다듬기\n"
-        "3) 컬럼명 자동탐지 대신, Kaggle 데이터 컬럼을 명확히 지정해서 UX 개선\n"
+        "- ✅ `st.set_page_config(layout='wide')` : applied at the top\n"
+        "- ✅ `st.divider()` : used to separate sections\n"
+        "- ✅ Tabs: `st.tabs()` used for each challenge\n"
+        "- ✅ Docstrings: included in `load_tips_data`, `load_csv`, `safe_numeric`, `pick_first_existing_column`\n\n"
+        "To make it feel more like a dashboard:\n"
+        "1) Separate the sidebar by challenge (Tips and Kaggle currently share it)\n"
+        "2) Make titles and descriptions consistent in tone\n"
+        "3) Specify the Kaggle columns explicitly instead of auto-detecting them, for better UX\n"
     )

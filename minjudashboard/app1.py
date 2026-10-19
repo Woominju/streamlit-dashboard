@@ -3,14 +3,14 @@ import pandas as pd
 import plotly.express as px
 from pathlib import Path
 
-# 반드시 맨 위에 위치해야 함
+# must be at the very top
 st.set_page_config(layout="wide", page_title="Streamlit Dashboards")
 
 # ================================
 # 0) Intro / Playground
 # ================================
 st.title("🧪 Streamlit Practice App")
-st.write("여기는 여러 실습 예제를 한 파일로 모아둔 Streamlit 앱입니다.")
+st.write("This Streamlit app collects several practice examples in one file.")
 
 st.divider()
 st.header("1) Basic Widgets")
@@ -169,11 +169,11 @@ if crypto_path.exists():
         )
         st.plotly_chart(fig, use_container_width=True)
     else:
-        st.info("숫자형 컬럼이 2개 이상 있어야 자동 차트를 그릴 수 있어요. (엑셀 컬럼 타입을 확인해보세요.)")
+        st.info("Automatic charts need at least 2 numeric columns. (Check the column types in the Excel file.)")
 
 else:
-    st.error("암호화폐 엑셀 파일을 찾을 수 없습니다.")
-    st.write("아래 경로를 확인하세요:")
+    st.error("Could not find the cryptocurrency Excel file.")
+    st.write("Check the path below:")
     st.code(str(crypto_path))
 
 # ================================
@@ -216,5 +216,5 @@ if house_path.exists():
     st.plotly_chart(fig2, use_container_width=True)
 
 else:
-    st.info("house_data.csv 파일이 현재 폴더에 없어서 House 대시보드는 건너뜁니다.")
-    st.write("같은 폴더에 house_data.csv를 넣으면 자동으로 활성화됩니다.")
+    st.info("house_data.csv is not in the current folder, so the House dashboard is skipped.")
+    st.write("Put house_data.csv in the same folder to enable it automatically.")

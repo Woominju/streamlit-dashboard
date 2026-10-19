@@ -37,7 +37,7 @@ st.divider()
 
 st.header("Dashboard Layout")
 
-# Sidebar filters (리스트를 제대로 닫아줌)
+# Sidebar filters (list properly closed)
 st.sidebar.header("Filters")
 year_filter = st.sidebar.slider("Select Year", 2020, 2025, 2023)
 category_filter = st.sidebar.selectbox("Category", ["All", "A", "B", "C"])
